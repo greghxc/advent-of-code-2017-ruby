@@ -1,20 +1,23 @@
-# frozen_string_literal: true
-
 require 'hamster'
 
 # Advent of Code 2017 - Day 5
 class DayFiveProcessor
   def part_one(int_list)
-    recursive_processor(Hamster::Vector.new(int_list), 0, 0)
+    calc = Proc.new { |orig| orig + 1 }
+    recursive_processor(calc, Hamster::Vector.new(int_list), 0, 0)
   end
 
-  def recursive_processor(int_list, current_position, iteration)
+  def part_two(int_list)
+    calc = Proc.new { |orig| orig >= 3 ? orig - 1 : orig + 1 }
+    recursive_processor(calc, Hamster::Vector.new(int_list), 0, 0)
+  end
+
+  def recursive_processor(calc, int_list, current_position, iteration)
     return iteration if current_position >= int_list.length
-    start_value = int_list[current_position]
-    new_value = start_value + 1
     recursive_processor(
-      int_list.put(current_position, new_value),
-      current_position + start_value,
+      calc,
+      int_list.put(current_position, calc.call(int_list[current_position])),
+      current_position + int_list[current_position],
       iteration + 1
     )
   end
